@@ -229,12 +229,12 @@
       const textWidth = el.scrollWidth;
       const areaWidth = area.clientWidth;
       const distance = textWidth + areaWidth;
-      const speed = 60;
+      const speed = 35;
       const duration = distance / speed;
 
       el.style.setProperty('--scroll-dist', -distance + 'px');
       el.style.setProperty('--scroll-dur', duration + 's');
-      
+
       el.style.animation = '';
     }
     
