@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Widget</title>
+  <style>
+    @font-face {
+        font-family: 'RunescapeChat';
+        src: url('RuneScape-Chat-Bold-07.ttf');
+    }
+
+    .card {
+      position: relative;
+      width: 450px;
+      height: 110px;
+    }
+
+    .backdrop {
+      position: absolute;
+      top: 15px;
+      left: 0px;
+      width: 450px;
+      height: 65px;
+      background: repeating-linear-gradient(
+        -45deg,
+        orange,
+        orange 2px,
+        rgba(255, 200, 140, 1) 2px,
+        rgba(255, 200, 140, 1) 3px
+      );
+      border-radius: 6px;
+    }
+
+    .bar {
+      position: absolute;
+      top: 0;
+      left: 8px;
+      width: 420px;
+      height: 30px;
+      background: rgba(95, 75, 115, 1);
+      color: white;
+      padding: 20px;
+      font-family: 'RunescapeChat', sans-serif;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .brand {
+        font-size: 24px;
+        color: white;
+    }
+
+    .divider {
+        width: 4px;
+        align-self: stretch;
+        background: orange;
+        border-radius: 2px;
+    }
+
+    .speaker {
+        width: 26px;
+        height: 22px;
+        position: relative;
+        z-index: 2;
+        background: rgba(95, 75, 115, 1)
+    }
+
+    .spacer {
+        width: 0px;
+    }
+
+    .track-area {
+        position: relative;
+        flex: 1;
+        height: 100px;
+        overflow: hidden;
+    }
+
+     .track-name {
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translate(0, -50%);
+        font-size: 16px;
+        color: white;
+        white-space: nowrap;
+        animation: scroll-left 20s linear infinite;
+        font-size: 30px;
+    }
+
+    @keyframes scroll-left {
+        from { transform: translate(0,-50%); }
+        to   { transform: translate(-500px, -50%); }
+    }
+    
+    .speaker .cone {
+        fill: none;
+        stroke: white;
+        stroke-width: 2;
+        stroke-linejoin: round;
+    }
+    .speaker .wave {
+        fill: none;
+        stroke: orange;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+    .speaker .w1 {
+        animation: pulse 1.6s ease-in-out infinite;
+    }
+    .speaker .w2 {
+        animation: pulse 1.6s ease-in-out infinite 0.25s;
+    }
+
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.35; }
+        50% {opacity: 1; }
+    }
+
+
+    .subtitle {
+      font-size: 12px;
+      color: #aaaaaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="backdrop"></div>
+    <div class="bar">
+        <div class="brand">
+            Stream Radio
+      <div class="subtitle">Playing: Stream Playlist</div>
+    </div>
+    <div class="divider"></div>
+    <svg class="speaker" viewBox="0 0 30 22">
+        <path class="cone" d="M2 8 H8 L15 2 V20 L8 14 H2 Z"/>
+        <path class="wave w1" d="M19 7 Q22 11 19 15"/>
+        <path class="wave w2" d="M23 4 Q28 11 23 18"/>
+    </svg>
+    <div class="spacer"></div>
+    <div class="track-area">
+        <div class="track-name">Now Playing</div>
+    </div>
+  </div>
+  </div>
+
+  <button onclick="setTrack('The Weeknd - Blinding Lights')"> Test Song 1</button>
+  <button onclick="setTrack('Daft Punk - One More Time')"> Test Song 2</button>
+
+  <script>
+    function setTrack(text) {
+        const el = document.querySelector('.track-name');
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.textContent = text;
+        el.style.animation = '';
+    }
+  </script>
+
+</body>
+</html>
