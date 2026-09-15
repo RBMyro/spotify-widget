@@ -149,6 +149,8 @@
   </div>
   </div>
 
+  <button id="connectBtn">Connect Spotify</button>
+
   <script>
     function randomString(length) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -166,6 +168,31 @@
         let base64 = btoa(String.fromCharCode(...hashArray));
         return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
     }
+
+    const CONFIG = {
+        CLIENT_ID: '6f7347e59283473ba0968cab2953d1d0',
+        REDIRECT_URL: 'https://rbmyro.github.io/spotify-widget/'
+    };
+
+    async function startLogin() {
+        const verifier = randomString(64);
+        sessionStorage.setItem('verifier', verifier);
+
+        const challenge = await sha256base64url(verifier);
+
+        const params = new URLSearchParams({
+            client_id: CONFIG.CLIENT_ID,
+            response_type: 'code',
+            redirect_uri: CONFIG.REDIRECT_URL,
+            code_challenge_method: 'S256',
+            code_challenge: challenge,
+            scope: 'user-read-currently-playing'
+        });
+
+        window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
+    }
+
+    document.getElementById('connectBtn').addEventListener('click', startLogin);
 
     function setTrack(text) {
      const el = document.querySelector('.track-name');
