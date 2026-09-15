@@ -87,13 +87,13 @@
         font-size: 16px;
         color: white;
         white-space: nowrap;
-        animation: scroll-left 20s linear infinite;
+        animation: scroll-left var(--scroll-dur, 20s) linear infinite;
         font-size: 30px;
     }
 
     @keyframes scroll-left {
         from { transform: translate(0,-50%); }
-        to   { transform: translate(-500px, -50%); }
+        to   { transform: translate(var(--scroll-dist, -500px), -50%); }
     }
     
     .speaker .cone {
@@ -212,14 +212,29 @@
         });
 
         const data = await response.json();
+
+        localStorage.setItem('spotify_refresh_token', data.refresh_token);
+
         return data.access_token;
     }
 
     function setTrack(text) {
      const el = document.querySelector('.track-name');
+     const area = document.querySelector('.track-area');
+
       el.style.animation = 'none';
       el.offsetHeight;
       el.textContent = text;
+
+      const textWidth = el.scrollWidth;
+      const areaWidth = area.clientWidth;
+      const distance = textWidth + areaWidth;
+      const speed = 60;
+      const duration = distance / speed;
+
+      el.style.setProperty('--scroll-dist', -distance + 'px');
+      el.style.setProperty('--scroll-dur', duration + 's');
+      
       el.style.animation = '';
     }
     
