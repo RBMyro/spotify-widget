@@ -214,6 +214,7 @@
         const data = await response.json();
 
         localStorage.setItem('spotify_refresh_token', data.refresh_token);
+        console.log('Your refresh token (copy this for OBS):', data.refresh_token);
 
         return data.access_token;
     }
@@ -293,10 +294,15 @@
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
+  const importedToken = params.get('token');
 
   let token = null;
 
-  if (code) {
+ if (importedToken) {
+    localStorage.setItem('spotify_refresh_token', importedToken);
+    window.history.replaceState({}, '', CONFIG.REDIRECT_URL);
+    token = await refreshAccessToken();
+  } else if (code) {
     token = await exchangeCodeForToken(code);
     window.history.replaceState({}, '', CONFIG.REDIRECT_URL);
   } else {
