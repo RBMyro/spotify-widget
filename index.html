@@ -60,14 +60,6 @@
         border-radius: 2px;
     }
 
-    .speaker {
-        width: 26px;
-        height: 22px;
-        position: relative;
-        z-index: 2;
-        background: rgba(95, 75, 115, 1)
-    }
-
     .spacer {
         width: 0px;
     }
@@ -95,37 +87,29 @@
         from { transform: translate(0,-50%); }
         to   { transform: translate(var(--scroll-dist, -500px), -50%); }
     }
-    
-    .speaker .cone {
-        fill: none;
-        stroke: white;
-        stroke-width: 2;
-        stroke-linejoin: round;
-    }
-    .speaker .wave {
-        fill: none;
-        stroke: orange;
-        stroke-width: 2;
-        stroke-linecap: round;
-    }
-    .speaker .w1 {
-        animation: pulse 1.6s ease-in-out infinite;
-    }
-    .speaker .w2 {
-        animation: pulse 1.6s ease-in-out infinite 0.25s;
-    }
-
-
-    @keyframes pulse {
-        0%, 100% { opacity: 0.35; }
-        50% {opacity: 1; }
-    }
-
 
     .subtitle {
       font-size: 12px;
       color: #aaaaaa;
     }
+
+    .progress-track {
+      position: absolute;
+      left: 4px;
+      bottom: 4px;
+      width: 420px;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .progress-fill{
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 2px;
+    }
+
   </style>
 </head>
 <body>
@@ -138,14 +122,16 @@
     </div>
     <div class="divider"></div>
     <svg class="speaker" viewBox="0 0 30 22">
-        <path class="cone" d="M2 8 H8 L15 2 V20 L8 14 H2 Z"/>
-        <path class="wave w1" d="M19 7 Q22 11 19 15"/>
-        <path class="wave w2" d="M23 4 Q28 11 23 18"/>
+    <path class="wave w1" d="M19 7 Q22 11 19 15"/>
+    <path class="wave w2" d="M23 4 Q28 11 23 18"/>
     </svg>
     <div class="spacer"></div>
     <div class="track-area">
         <div class="track-name">Now Playing</div>
     </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
   </div>
 
@@ -251,6 +237,8 @@
             if (lastTrack !== 'none') {
             setTrack('Nothing Playing right now');
             lastTrack = 'none';
+            document.getElementById('progressFill').style.transition = 'none';
+            document.getElementById('progressFill').style.width = '0%';
             }
             return;
         }
@@ -259,6 +247,11 @@
         const artist = data.item.artists[0].name;
         const song = data.item.name;
         const current = artist + ' - ' + song;
+
+        const percent = (data.progress_ms / data.item.duration_ms) * 100;
+        const fillEl = document.getElementById('progressFill');
+        fillEl.style.transition = 'width 5s linear';
+        fillEl.style.width = percent + '%';
 
         if (current !== lastTrack) {
             setTrack(current);
