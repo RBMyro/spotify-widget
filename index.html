@@ -19,11 +19,13 @@
       position: relative;
       width: 450px;
       height: 110px;
-      transition: opacity 1s ease;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: translateY(0);
     }
 
     .card-hidden {
       opacity: 0;
+      transform: translateY(12px);
     }
 
     .backdrop {
@@ -325,6 +327,11 @@
         }
 
         const data = await response.json();
+
+          if (!data.item) {
+            return;
+          }
+
         const artist = data.item.artists[0].name;
         const song = data.item.name;
         const current = artist + ' - ' + song;
