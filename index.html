@@ -137,7 +137,7 @@
 
     .subtitle {
       font-size: 12px;
-      color: #aaaaaa;
+      color: #c4b8d9;
     }
 
     .progress-track {
@@ -434,7 +434,7 @@ async function init() {
   if (currentToken) {
     document.getElementById('connectBtn').style.display = 'none';
     pollNowPlaying();
-    setInterval(pollNowPlaying, 5000);
+    setInterval(pollNowPlaying, 1500);
 
     setInterval(async () => {
       currentToken = await refreshAccessToken();
