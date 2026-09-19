@@ -292,6 +292,7 @@
     let lastTrack = '';
     let trackData = null;
     let currentToken = null;
+    let missedCount = 0;
 
     function setVisibility(isPlaying) {
       const cardEl = document.querySelector('.card');
@@ -312,11 +313,14 @@
         }
 
         if (response.status === 204) {
-            if (lastTrack !== 'none') {
-            setTrack('Nothing Playing right now');
-            lastTrack = 'none';
-            trackData = null;
-            setVisibility(false);
+            missedCount++;
+            if (missedCount >= 2) {
+              if (lastTrack !== 'none') {
+              setTrack('Nothing Playing right now');
+              lastTrack = 'none';
+              trackData = null;
+              setVisibility(false);
+              }
             }
             return;
         }
@@ -343,7 +347,15 @@
           fetchedAt: Date.now()
         };
 
-        setVisibility(data.is_playing);
+        if (data.is_playing) {
+          missedCount = 0;
+          setVisibility(true);
+        } else {
+            missedCount++;
+            if (missedCount >= 2) {
+                setVisibility(false);
+            }
+        }
 
         if (current !== lastTrack) {
             setTrack(current);
