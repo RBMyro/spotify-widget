@@ -284,12 +284,20 @@
     
     let lastTrack = '';
     let trackData = null;
+    let currentToken = null;
 
 
-      async function pollNowPlaying(token) {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            headers: { 'Authorization': 'Bearer ' + token }
+      async function pollNowPlaying() {
+        try {
+          const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+              headers: { 'Authorization': 'Bearer ' + currentToken }
         });
+
+        if (response.status === 401) {
+          console.log('Token expired, refreshing...');
+          currentToken = await refreshAccessToken();
+          return;
+        }
 
         if (response.status === 204) {
             if (lastTrack !== 'none') {
@@ -298,6 +306,11 @@
             trackData = null;
             }
             return;
+        }
+
+        if (!response.ok) {
+          console.log('Spotify API error:', response.status);
+          return;
         }
 
         const data = await response.json();
@@ -315,6 +328,9 @@
         if (current !== lastTrack) {
             setTrack(current);
             lastTrack = current;
+        }
+      } catch (error) {
+          console.log('pollNowPlaying failed, will retry next cycle:', error);
         }
       }
 
@@ -343,6 +359,7 @@
       setInterval(updateProgressBar, 250);
 
     async function refreshAccessToken() {
+      try {
         const refreshToken = localStorage.getItem('spotify_refresh_token');
         if (!refreshToken) return null;
 
@@ -358,6 +375,11 @@
         body: body
      });
 
+     if (!response.ok) {
+        console.log('Refresh request failed:', response.status);
+        return null;
+     }
+
     const data = await response.json();
 
     if (data.refresh_token) {
@@ -365,35 +387,37 @@
     }
 
     return data.access_token;
+} catch (error) {
+        console.log('refreshAccessToken failed, will retry next cycle:', error);
+        return null;
+    }
 }
+
+
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   const importedToken = params.get('token');
 
-  let token = null;
-
  if (importedToken) {
     localStorage.setItem('spotify_refresh_token', importedToken);
     window.history.replaceState({}, '', CONFIG.REDIRECT_URL);
-    token = await refreshAccessToken();
+    currentToken = await refreshAccessToken();
   } else if (code) {
-    token = await exchangeCodeForToken(code);
+    currentToken = await exchangeCodeForToken(code);
     window.history.replaceState({}, '', CONFIG.REDIRECT_URL);
   } else {
-    token = await refreshAccessToken();
+    currentToken = await refreshAccessToken();
   }
 
-  if (token) {
+  if (currentToken) {
     document.getElementById('connectBtn').style.display = 'none';
-    pollNowPlaying(token);
-    setInterval(async () => {
-      pollNowPlaying(token);
-    }, 5000);
+    pollNowPlaying();
+    setInterval(pollNowPlaying, 5000);
 
     setInterval(async () => {
-      token = await refreshAccessToken();
+      currentToken = await refreshAccessToken();
     }, 50 * 60 * 1000);
   }
 }
