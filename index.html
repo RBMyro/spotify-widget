@@ -118,18 +118,19 @@
         stroke: orange;
         stroke-width: 2;
         stroke-linecap: round;
+        stroke-dashoffset: 3 3;
     }
     .speaker .w1 {
-        animation: pulse 1.6s ease-in-out infinite;
+        animation: emit 0.8s linear infinite;
     }
     .speaker .w2 {
-        animation: pulse 1.6s ease-in-out infinite 0.25s;
+        animation: emit 0.s linear infinite 0.15s;
     }
 
 
-    @keyframes pulse {
-        0%, 100% { opacity: 0.35; }
-        50% {opacity: 1; }
+    @keyframes emit {
+        from { stroke-dashoffset: 0; }
+        to   { stroke-dashoffset: -6; }
     }
 
     .subtitle {
