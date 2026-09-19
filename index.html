@@ -19,6 +19,11 @@
       position: relative;
       width: 450px;
       height: 110px;
+      transition: opacity 1s ease;
+    }
+
+    .card-hidden {
+      opacity: 0;
     }
 
     .backdrop {
@@ -286,6 +291,11 @@
     let trackData = null;
     let currentToken = null;
 
+    function setVisibility(isPlaying) {
+      const cardEl = document.querySelector('.card');
+      cardEl.classList.toggle('card-hidden', !isPlaying)
+    }
+
 
       async function pollNowPlaying() {
         try {
@@ -304,6 +314,7 @@
             setTrack('Nothing Playing right now');
             lastTrack = 'none';
             trackData = null;
+            setVisibility(false);
             }
             return;
         }
@@ -324,6 +335,8 @@
           is_playing: data.is_playing,
           fetchedAt: Date.now()
         };
+
+        setVisibility(data.is_playing);
 
         if (current !== lastTrack) {
             setTrack(current);
